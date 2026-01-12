@@ -28,3 +28,8 @@ class DrugInfo(BaseModel):
     name: str
     description: Optional[str] = None
 
+
+class RetrievedChunk(BaseModel):
+    text: str
+    source: str
+    reference: str | None = None

@@ -1,5 +1,4 @@
 # backend/core/llm_client.py
-
 from typing import Optional
 from core.config import Config
 
@@ -30,7 +29,6 @@ class LLMClient:
                 f"{prompt[:500]}"
             )
 
-        # Placeholder for real LLM integration
         raise NotImplementedError(
             "Real LLM provider not configured yet."
         )
@@ -44,11 +42,10 @@ class LLMClient:
         if self.provider == "dummy":
             return text[:400] + "..."
 
-        # Placeholder for real LLM integration
         raise NotImplementedError(
             "Real LLM provider not configured yet."
         )
 
 
-# Singleton instance (important)
+
 llm_client = LLMClient()

@@ -1,12 +1,23 @@
 
-from .state import AgentState
-from .nodes import retriever_node, generator_node
+# backend/graph/build_graph.py
 
-def build_graph():
-    # Placeholder for LangGraph construction
-    # from langgraph.graph import StateGraph, END
-    # workflow = StateGraph(AgentState)
-    # workflow.add_node("retriever", retriever_node)
-    # workflow.add_node("generator", generator_node)
-    # ...
-    return "Graph object placeholder"
+from typing import Callable, Dict, List
+
+
+def build_graph() -> Dict[str, List[str]]:
+    """
+    BUILD GRAPH
+
+    Defines the execution graph for the multi-agent pipeline.
+    Nodes are agent names, edges define execution order.
+    """
+
+    graph = {
+        "retriever": ["generator"],
+        "generator": ["fact_checker"],
+        "fact_checker": ["citation"],
+        "citation": ["summariser"],
+        "summariser": []
+    }
+
+    return graph

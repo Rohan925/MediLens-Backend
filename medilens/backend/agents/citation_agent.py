@@ -1,6 +1,4 @@
-
 # backend/agents/citation_agent.py
-
 from typing import Dict, Any, List
 from core.models import RetrievedChunk
 
@@ -14,7 +12,6 @@ def _build_citation(chunk: RetrievedChunk) -> Dict[str, str]:
     """
 
     if chunk.source == "openfda":
-        # If reference is like: "openfda:ibuprofen_label_001"
         return {
             "source": "OpenFDA",
             "label": chunk.reference,
@@ -60,7 +57,6 @@ async def citation_agent(state: Dict[str, Any]) -> Dict[str, Any]:
             citations.append(_build_citation(chunk))
             seen.add(chunk.reference)
 
-    # Format citations for UI display
     citation_text = "\n".join(
         f"[{i+1}] {c['source']} — {c['url']}"
         for i, c in enumerate(citations)

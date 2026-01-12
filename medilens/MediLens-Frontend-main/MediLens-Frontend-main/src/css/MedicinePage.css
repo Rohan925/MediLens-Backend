@@ -1,0 +1,25 @@
+.medicine-page {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+}
+
+.medicine-content {
+  width: 70%;
+  background-color: #2b2b2b;
+  padding: 40px;
+  border-radius: 10px;
+
+  border: 1px solid #3a3a3a;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.medicine-content h2 {
+  margin-bottom: 20px;
+}
+
+.medicine-content p {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: #eaeaea;
+}

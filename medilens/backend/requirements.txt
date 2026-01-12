@@ -6,3 +6,7 @@ pydantic-settings
 requests
 httpx
 pytest
+pytesseract
+pillow
+python-multipart
+opencv-python-headless

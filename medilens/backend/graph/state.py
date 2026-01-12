@@ -1,7 +1,19 @@
+# backend/graph/state.py
 
-from typing import TypedDict, Annotated, List, Union
+from typing import TypedDict, List, Optional
 
-class AgentState(TypedDict):
-    query: str
-    documents: List[str]
-    answer: str
+from core.models import RetrievedChunk
+
+class GraphState(TypedDict, total=False):
+    """
+    Shared state passed through the multi-agent graph.
+
+    Each agent reads from and writes to this state.
+    """
+    retrieved_chunks: List[RetrievedChunk]
+    generated_answer: str
+    checked_answer: str
+    is_verified: bool
+    citations: List[str]
+    summary: Optional[str]
+    final_answer: str

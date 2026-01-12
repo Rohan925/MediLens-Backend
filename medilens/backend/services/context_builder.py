@@ -1,36 +1,47 @@
 # backend/services/context_builder.py
 
 from typing import List
+
 from core.models import RetrievedChunk
+from core.config import Config
 
 
-def build_rag_context(
-    chunks: List[RetrievedChunk],
-    max_chars: int = 3000
-) -> str:
+def build_context(chunks: List[RetrievedChunk]) -> str:
     """
-    Build a single context string from retrieved chunks for RAG.
+    Build a formatted context string from retrieved chunks.
 
-    - Concatenate relevant chunks in order.
-    - Stop when max_chars is reached.
-    - Return plain text that will be given to the LLM.
+    Used by generator and fact-checker services.
     """
-    context_parts: List[str] = []
-    total = 0
 
-    for chunk in chunks:
-        text = chunk.text.strip()
-        if not text:
+    if not chunks:
+        return ""
+
+    context_blocks = []
+
+    for idx, chunk in enumerate(chunks, start=1):
+        if not chunk.text:
             continue
 
-        length = len(text)
-        if total + length > max_chars:
-            break
+        block = (
+            f"[Source {idx} | {chunk.source}]\n"
+            f"{chunk.text.strip()}"
+        )
+        context_blocks.append(block)
 
-        context_parts.append(text)
-        total += length
+    full_context = "\n\n".join(context_blocks)
 
-    if not context_parts:
-        return "No trusted context available."
+    return _trim_context(full_context)
 
-    return "\n\n".join(context_parts)
+
+def _trim_context(context: str) -> str:
+    """
+    Trim context to a safe maximum length.
+    Prevents prompt overflow.
+    """
+
+    max_chars = Config.MAX_CONTEXT_CHARS
+
+    if len(context) <= max_chars:
+        return context
+
+    return context[:max_chars] + "\n\n[Context truncated]"
