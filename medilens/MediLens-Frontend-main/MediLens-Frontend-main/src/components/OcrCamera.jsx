@@ -1,79 +1,61 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import "../css/OcrCamera.css";
 
-export default function OcrCamera() {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState("");
+function OcrCamera({ onResult }) {
+  const fileInputRef = useRef(null);
+  const [file, setFile] = useState(null);
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+  const handleCardClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
     if (!file) return;
 
-    setLoading(true);
-    setError("");
-    setResult(null);
+    const formData = new FormData();
+    formData.append("file", file);
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
+    const response = await fetch("http://127.0.0.1:8000/api/ocr", {
+      method: "POST",
+      body: formData,
+    });
 
-      const res = await fetch("http://localhost:8000/api/ocr", {
-        method: "POST",
-        body: formData,
-      });
+    const data = await response.json();
+    console.log("OCR RESPONSE:", data);
 
-      if (!res.ok) {
-        throw new Error("OCR request failed");
-      }
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setError("OCR failed. Please try another image.");
-    } finally {
-      setLoading(false);
+    if (onResult) {
+      onResult(data);
     }
   };
 
   return (
-    <div className="tool-card">
-      <div className="tool-header">OCR Camera</div>
+    <div className="ocr-card">
+      <h3>OCR Camera</h3>
 
-      {/* Camera clickable area */}
-      <div className="tool-body tool-camera">
-        <label className="camera-button">
-          📷
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleFileChange}
-          />
-        </label>
+      <div className="upload-box" onClick={handleCardClick}>
+        <span className="camera-icon">📷</span>
+        <p>Click the camera to upload an image</p>
       </div>
 
-      {/* Footer / Result area */}
-      <div className="tool-footer">
-        {loading && <span className="ocr-hint">Scanning image...</span>}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleFileChange}
+      />
 
-        {error && (
-          <span className="ocr-hint" style={{ color: "red" }}>
-            {error}
-          </span>
-        )}
-
-        {!loading && !result && !error && (
-          <span className="ocr-hint">
-            Click the camera to upload an image
-          </span>
-        )}
-
-        {result?.detected_drug && (
-          <div className="ocr-hint">
-            <b>Detected:</b> {result.detected_drug}
-          </div>
-        )}
-      </div>
+      {file && (
+        <button className="scan-btn" onClick={handleUpload}>
+          Scan Medicine
+        </button>
+      )}
     </div>
   );
 }
+
+export default OcrCamera;

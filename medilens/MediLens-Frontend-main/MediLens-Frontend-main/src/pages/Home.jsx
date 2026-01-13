@@ -17,7 +17,17 @@ function Home() {
 
         <div className="options">
           <ChatBot />
-          <OcrCamera />
+
+          {/* 🔥 OCR RESULT HANDLER */}
+          <OcrCamera
+            onResult={(data) => {
+              console.log("OCR RESULT:", data);
+
+              if (data?.drug_names?.length > 0) {
+                navigate(`/medicine/${data.drug_names[0]}`);
+              }
+            }}
+          />
         </div>
       </div>
     </>
